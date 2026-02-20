@@ -70,9 +70,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      package: write
+      packages: write
 
-    setps:
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       
