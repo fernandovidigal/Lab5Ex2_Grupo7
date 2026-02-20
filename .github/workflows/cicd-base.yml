@@ -9,13 +9,13 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  # JOB 1: Análise de Segurança e Testes
   security-scan:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
       actions: read
       contents: read
-      packages: write
       
     steps:
       - name: Checkout do código
@@ -64,6 +64,15 @@ jobs:
           name: Generate artifact with Trivy result
           path: trivy-results.sarif
 
+  # JOB 2: Build e Push da Imagem (Depende do security-scan)
+  build-and-push:
+    needs: security-scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      package: write
+
+    setps:
       - name: Checkout repository
         uses: actions/checkout@v4
       
