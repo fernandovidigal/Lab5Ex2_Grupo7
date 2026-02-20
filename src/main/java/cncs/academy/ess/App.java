@@ -19,6 +19,8 @@ import io.javalin.community.ssl.SslPlugin;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.casbin.jcasbin.main.Enforcer;
 
+import java.io.File;
+
 public class App {
     public static void main(String[] args) throws Exception {
         /*SslPlugin sslPlugin = new SslPlugin(conf -> {
@@ -26,8 +28,17 @@ public class App {
             conf.securePort = 7100;
         });*/
 
-        String modelPath = App.class.getClassLoader().getResource("casbin/model.conf").getPath();
-        String policyPath = App.class.getClassLoader().getResource("casbin/policy.csv").getPath();
+        String modelPath;
+        String policyPath;
+
+        File modelFile = new File("/app/casbin/model.conf");
+        if(modelFile.exists()){
+            modelPath = "/app/casbin/model.conf";
+            policyPath = "/app/casbin/policy.csv";
+        } else {
+            modelPath = App.class.getClassLoader().getResource("casbin/model.conf").getPath();
+            policyPath = App.class.getClassLoader().getResource("casbin/policy.csv").getPath();
+        }
 
         Enforcer enforcer = new Enforcer(modelPath, policyPath);
 
@@ -47,19 +58,19 @@ public class App {
 
         // Initialize routes for user management
 
-        //InMemoryUserRepository userRepository = new InMemoryUserRepository();
-        SQLUserRepository userRepository = new SQLUserRepository(ds);
+        InMemoryUserRepository userRepository = new InMemoryUserRepository();
+        //SQLUserRepository userRepository = new SQLUserRepository(ds);
         TodoUserService userService = new TodoUserService(userRepository);
         UserController userController = new UserController(userService);
 
-        //InMemoryTodoListsRepository listsRepository = new InMemoryTodoListsRepository();
-        SQLTodoListsRepository listsRepository = new SQLTodoListsRepository(ds);
+        InMemoryTodoListsRepository listsRepository = new InMemoryTodoListsRepository();
+        //SQLTodoListsRepository listsRepository = new SQLTodoListsRepository(ds);
         SQLListShareRepository listShareRepository = new SQLListShareRepository(ds);
         TodoListsService toDoListService = new TodoListsService(listsRepository, listShareRepository);
         TodoListController todoListController = new TodoListController(toDoListService);
 
-        //InMemoryTodoRepository todoRepository = new InMemoryTodoRepository();
-        SQLTodoRepository todoRepository = new SQLTodoRepository(ds);
+        InMemoryTodoRepository todoRepository = new InMemoryTodoRepository();
+        //SQLTodoRepository todoRepository = new SQLTodoRepository(ds);
         TodoService todoService = new TodoService(todoRepository, listsRepository);
         TodoController todoController = new TodoController(todoService, toDoListService);
 

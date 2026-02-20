@@ -1,0 +1,15 @@
+g, Admin, Share
+g, Share, Base 
+g, alice, Base
+g, admin, Admin
+
+p, Admin, /user, POST
+p, Admin, /user/:id, GET
+
+p, Base, /todolist, GET
+p, Base, /todolist, POST
+p, Base, /todolist/:id, GET
+
+p, Base, /todo/item, POST
+p, Base, /todo/:listid/tasks, GET
+p, Base, /todo/:listid/tasks/:taskid, GET
